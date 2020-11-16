@@ -1,0 +1,26 @@
+---
+# tasks file for openssh_server debian based distros
+
+- name: create openssh server run directory
+  file:
+    path: "{{ openssh_server__run_dir }}"
+    owner: root
+    group: root
+    mode: '0755'
+    state: directory
+  become: true
+  tags:
+    - setup
+
+- name: configure sshd service defaults
+  template:
+    src: debian/ssh.default.j2
+    dest: "{{ openssh_server__sshd_conf_path }}"
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  notify:
+    - "restart openssh_server service"
+  tags:
+    - configure

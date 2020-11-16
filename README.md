@@ -1,0 +1,387 @@
+Openssh Server
+==============
+
+Configure and Manage Openssh server.
+
+**NOTE**: It is possible to lock out network access to the node over ssh. Check configuration carefully or you access 
+to local console access before application.
+
+Best practice security has tried to be applied to the default configurations; however, always ensure sufficiant 
+scrutiny is as this is no guarantee.
+
+**NOTE**: By default root account login is disabled. Ensure you have access to login via a normal user account.
+
+Requirements
+------------
+
+Supports OS's
+- Debian 10
+- Centos 8
+
+Role Variables
+--------------
+
+Role variables are processed according to format; so, can be specified sigulary or via a list. 
+To omit an option use the yaml null.
+Boolean (true/false) values are converted to openssh yes/no values.
+
+```yaml
+# General options 
+# ---------------
+
+# Specifies which address family should be used.
+openssh_server_address_family: any 
+
+# Specifies the port number to listens on. 
+openssh_server_port: 22 
+
+# Specifies the local addresses to listen on.
+openssh_server_listen_address: 
+  - "0.0.0.0"
+  - "::"
+
+# Specifies a file containing a private host key used by SSH.
+openssh_server_host_key: 
+  - "{{ openssh_server__ed25519_host_key_path }}"
+# Available variables:
+#   - "{{ openssh_server__rsa_host_key_path }}"
+#   - "{{ openssh_server__ecdsa_host_key_path }}"
+#   - "{{ openssh_server__ed25519_host_key_path }}"
+
+# specify the rsa host key bit (regenerate)
+openssh_server_rsa_host_key_bit: 4096
+
+# Cryptography options
+# --------------------
+
+# Specifies the ciphers allowed
+openssh_server_ciphers: "{{ openssh_server__ciphers }}"
+# Default:
+#   - aes128-gcm@openssh.com
+#   - aes256-gcm@openssh.com
+#   - chacha20-poly1305@openssh.com
+#   - aes256-ctr
+#   - aes192-ctr
+#   - aes128-ctr
+# sshd version 5:
+#   - aes256-ctr
+#   - aes192-ctr
+#   - aes128-ctr
+
+# Specifies the hashalgorithm used when logging keyfingerprints.
+openssh_server_fingerprint_hash: "sha256"
+
+# Specifies the key types that will be accepted for hostbased authentication as a list of comma-separated patterns
+openssh_server_hostbased_accepted_key_types: null
+
+# Specifies the host key algorithms that the server offers.
+openssh_server_host_key_algorithms: null
+
+# Specifies the available KEX (Key Exchange) algorithms. 
+openssh_server_kex_algorithms: "{{ openssh_server__kex_algorithms }}"
+# Default:
+#   - diffie-hellman-group14-sha256
+#   - diffie-hellman-group16-sha512
+#   - diffie-hellman-group18-sha512
+#   - curve25519-sha256@libssh.org
+# sshd version 5:
+# - diffie-hellman-group-exchange-sha256
+
+# Specifies the available MAC (message authentication code) algorithms.
+openssh_server_macs: "{{ openssh_server__macs }}"
+# Default:
+#   - umac-128-etm@openssh.com
+#   - hmac-sha2-256-etm@openssh.com
+#   - hmac-sha2-512-etm@openssh.com
+# sshd version 5:
+#   - hmac-sha2-512
+
+# Specifies the key types that will be accepted for public key authentication
+openssh_server_pubkey_accepted_key_types: null
+
+# Specifies the maximum amount of data that may be transmitted before the session key is renegotiated, optionally 
+# followed a maximum amount of time that may pass before the session key is renegotiated. 
+openssh_server_rekey_limit: "1G 1H"
+
+
+# Logging Options 
+# ---------------
+
+# Gives the facility code that is used when logging messages 
+openssh_server_syslog_facility: "AUTH"
+
+# Gives the verbosity level that is used when logging messages
+openssh_server_log_level: "VERBOSE"
+
+
+# Authentication Options 
+# ----------------------
+
+# Specifies the authentication methods that must be successfully completed for a user to be granted access.
+# comma seperated list of authentication methods
+openssh_server_authentication_methods: null
+# Example:
+#  - password,publickey
+
+# Specifies a program to be used to look up the user's public keys.
+openssh_server_authorized_keys_command: null
+
+# Specifies the user under whose account the AuthorizedKeysCommand is run.
+openssh_server_authorized_keys_command_user: nobody
+
+# Specifies the file that contains the public keys used for user authentication
+openssh_server_authorized_keys_file: .ssh/authorized_keys
+
+# Specifies a file that lists principal names that are accepted for certificate authentication. 
+openssh_server_authorized_principals_file: none
+
+# Specifies whether challenge-response authentication is allowed.
+openssh_server_challenge_response_authentication: false
+
+# Specifies whether rhosts or /etc/hosts.equiv authentication together with successful public key client host
+# authentication is allowed (host-based authentication).
+openssh_server_hostbased_authentication: false
+
+# Specifies that .rhosts and .shosts files will not be used in HostbasedAuthentication. 
+openssh_server_ignore_rhosts: true
+
+# Ignores the users known_hosts durring hostbased auth and only use the system known_hosts.
+openssh_server_ignore_user_known_hosts: false
+
+# The server disconnects after this time if the user has not successfully logged in.
+openssh_server_login_grace_time: "1m"
+
+# Specifies the maximum number of authentication attempts permitted per connection
+openssh_server_max_auth_tries: 3
+
+#Specifies the maximum number of open shell, login or subsystem sessions per network connection.
+openssh_server_max_sessions: 2
+
+# Specifies whether password authentication is allowed.
+openssh_server_password_authentication: true
+
+# When password authentication is allowed, allows login to accounts with empty password strings.
+openssh_server_permit_empty_passwords: false
+
+# Specifies whether root can log in using ssh.
+openssh_server_permit_root_login: false
+
+# Specifies whether public key authentication is allowed
+openssh_server_pubkey_authentication: true
+
+# Specifies revoked public keys file.
+openssh_server_revoked_keys: /etc/ssh/revoked_keys
+
+# Specifies whether to check file modes and ownership of the user's files and home directory before accepting login. 
+openssh_server_strict_modes: true
+
+# Enables the Pluggable Authentication Module interface
+openssh_server_use_pam: true
+
+
+# This keyword can be followed by a list of user name patterns
+openssh_server_allow_users: null
+
+# This keyword can be followed by a list of user name patterns
+openssh_server_allow_groups: null
+
+# This keyword can be followed by a list of user name patterns.
+openssh_server_deny_users: null
+
+# This keyword can be followed by a list of group name patterns
+openssh_server_deny_groups: null
+
+
+# Kerberos options 
+# ----------------
+
+# Specifies whether the PasswordAuthentication will be validated through the Kerberos KDC.
+openssh_server_kerberos_authentication: false
+
+# If kerberos password authentication fails then the password will be validated via any additional local methods.
+openssh_server_kerberos_or_local_passwd: true
+
+# Specifies whether to automatically destroy the user's ticket cache file on logout. 
+openssh_server_kerberos_ticket_cleanup: true
+
+# If AFS is active, attempt to acquire an AFS token before accessing the user's home directory.
+openssh_server_kerberos_get_afs_token: false
+
+
+# GSSAPI Options
+# --------------
+
+# Specifies whether user authentication based on GSSAPI is allowed. 
+openssh_server_gssapi_authentication: false
+
+# Specifies whether to automatically destroy the user's credentials cache on logout. 
+openssh_server_gssapi_cleanup_credentials: true
+
+# Determines whether to be strict about the identity of the GSSAPI acceptor a client authenticates against.
+openssh_server_gssapi_strict_acceptor_check: true
+
+# Specifies whether key exchange based on GSSAPI is allowed.
+openssh_server_gssapi_key_exchange: false
+
+
+# Forwarding Options 
+# ------------------
+
+# Specifies whether ssh-agent forwarding is permitted. 
+openssh_server_allow_agent_forwarding: false
+
+# Specifies whether TCP forwarding is permitted. 
+openssh_server_allow_tcp_forwarding: false
+
+# pecifies whether remote hosts are allowed to connect to ports forwarded for the client.
+openssh_server_gateway_ports: false
+
+# Specifies whether X11 forwarding is permitted.
+openssh_server_x11_forwarding: false
+
+# Specifies the first display number available X11 forwarding.
+openssh_server_x11_display_offset: 10
+
+# Specifies whether to bind the X11 forwarding server to the loopback address or to the wildcard address. 
+openssh_server_x11_use_localhost: true
+
+# Specifies whether tun device forwarding is allowed. 
+openssh_server_permit_tunnel: false
+
+
+# Other Options
+# -------------
+
+# Specifies what environment variables sent by the client will be copied into the session's environ. 
+openssh_server_accept_env: 
+  - LANG 
+  - LC_*
+
+# The contents of the specified file are sent to the remote user before authentication is allowed.
+openssh_server_banner: /etc/issue.net
+
+# Specifies the pathname of a directory to chroot to after authentication.
+openssh_server_chroot_directory: none
+
+# Sets a timeout interval in seconds to disconnect the client if no data has been received.
+openssh_server_client_alive_interval: 0
+
+# If reached while client alive messages are being sent, disconnect the client and terminating the session. 
+openssh_server_client_alive_count_max: 2
+
+# Specifies whether compression is enabled after the user has authenticated successfully. 
+openssh_server_compression: false
+
+# Specifies the maximum number of concurrent unauthenticated connections to the SSH daemon.
+openssh_server_max_startups: "5:30:25"
+
+# Specifies the file that contains the process ID.
+openssh_server_pid_file: /var/run/sshd.pid
+
+# Specifies whether pty allocation is permitted.
+openssh_server_permit_tty: true
+
+# Specifies whether ~/.ssh/environment and environment= options in ~/.ssh/authorized_keys are processed. 
+openssh_server_permit_user_environment: false
+
+# Specifies whether to print /etc/motd when a user logs in interactively.
+openssh_server_print_motd: false
+
+# Specifies whether to print the date and time of the user login. 
+openssh_server_print_last_log: true
+
+# Configures an external subsystem. 
+openssh_server_subsystem: "sftp {{ openssh_server__sftp_path }}"
+
+# Specifies whether the system should send TCP keepalive messages to the other side.
+openssh_server_tcp_keep_alive: false
+
+# Specifies whether to look up the remote host name with DNS.
+openssh_server_use_dns: false
+
+# Specifies additional text to append to the SSH protocol banner. 
+openssh_server_version_addendum: null
+
+
+# Condional block with custom options if all match parameters are met.
+# available conditions are: user, group, host, address, local_address, local_port.
+# options are set in snake_case
+openssh_server_match: {}
+# Example
+# - user: username
+#   address: 192.168.0.100
+#   options:
+#     PasswordAuthentication: true
+# - group: !devs 
+#   options:
+#     ForceCommand: /bin/echo "Disconnected"
+
+
+# Issue text set in the openssh_server_banner file is specified.
+# Set to null to disable templating
+openssh_server_issue: |
+  Only authorised access of this system, the network to which it is connected
+  and all services and data accessed directly or indirectly by or via it is
+  permitted and access by competing organisations is strictly forbidden.
+
+  If you do not have authority to access this system and the associated
+  networks, services and data you are required to disconnect yourself immediately
+  from this computer and its associated networks.
+
+  Authorisation is granted to a named individual to access this system, the
+  network to which it is connected and all services and data accessed directly or
+  indirectly by or via it. Authorisation must be received in advance.
+
+  We remind you that under the Computer Misuse Act 1990 there are three main
+  criminal offences:
+      1. Unauthorised access to computer material
+      2. Unauthorised access to a computer system with intent to commit or
+         facilitate the commission of a further offence
+      3. Unauthorised modification of computer material
+
+# System wide revolked key list.
+# Set to null to unmanage file if generated seperately.
+openssh_server_revoked_key_list: []
+# Example: 
+#  - "ssh-rsa AAAAABBBBBCCCCCCC111111122222222333333 example-key1"
+#  - "ssh-rsa DDDDDEEEEEFFFFFFF444444455555555666666 example-key2"
+
+
+# Other Role Options
+# ------------------
+
+# Options passed to the sshd service executable.
+openssh_server_sshd_opts: ""
+
+# redhat service crypto policy.
+# null to comment and use system wide policy
+openssh_server_crypto_policy: ""
+```
+
+Dependencies
+------------
+
+None
+
+Example Playbook
+----------------
+
+Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+
+```yaml
+- hosts: servers
+  tasks:
+    - name: "Include openssh_server"
+      include_role:
+        name: openssh_server
+```
+
+License
+-------
+
+LGPLv3
+
+Author Information
+------------------
+
+- Robert Brightling | [GitLab](https://gitlab.com/brightling) | [GitHub](https://github.com/rbrightling)

@@ -1,0 +1,22 @@
+---
+# tasks file for openssh_server redhat based distros
+
+- name: configure sshd service defaults
+  template:
+    src: "{{ lookup('first_found', sysconfig_params) }}"
+    dest: "{{ openssh_server__sshd_conf_path }}"
+    owner: root
+    group: root
+    mode: "0640"
+  vars:
+    sysconfig_params:
+      files:
+        - "{{ ansible_os_family | lower }}_{{ ansible_distribution_major_version }}/sshd.sysconfig.j2"
+        - "{{ ansible_os_family | lower }}/sshd.sysconfig.j2"
+      paths:
+        - "{{ role_path }}/templates"
+  become: true
+  notify:
+    - "restart openssh_server service"
+  tags:
+    - configure

@@ -1,0 +1,20 @@
+# Configuration file for the sshd service.
+
+# The server keys are automatically generated if they are missing.
+# To change the automatic creation, adjust sshd.service options for
+# example using  systemctl enable sshd-keygen@dsa.service  to allow creation
+# of DSA key or  systemctl mask sshd-keygen@rsa.service  to disable RSA key
+# creation.
+
+# System-wide crypto policy:
+# To opt-out, uncomment the following line
+{% if openssh_server_crypto_policy is not none %}
+CRYPTO_POLICY={{ openssh_server_crypto_policy }}
+{% else %}
+#CRYPTO_POLICY=
+{% endif %}
+
+# Decrease connection time by preventing reverse DNS lookups
+# (see https://lists.centos.org/pipermail/centos-devel/2016-July/014981.html
+#  and man sshd for more information)
+OPTIONS="{{ openssh_server_sshd_opts }}"

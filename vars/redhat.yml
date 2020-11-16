@@ -1,0 +1,25 @@
+---
+# default file for RedHat based distros
+
+openssh_server_kerberos_get_afs_token: null
+
+openssh_server__service_name: "sshd"
+
+openssh_server__packages:
+  - "openssh-server"
+
+openssh_server__ssh_keygen_bin: "/usr/bin/ssh-keygen"
+
+openssh_server__conf_path: "/etc/ssh/sshd_config"
+
+openssh_server__sshd_conf_path: "/etc/sysconfig/sshd"
+
+openssh_server__sshd_path: "/usr/sbin/sshd"
+
+openssh_server__sftp_path: "/usr/libexec/openssh/sftp-server"
+
+openssh_server__rsa_host_key_path: "/etc/ssh/ssh_host_rsa_key"
+
+openssh_server__ecdsa_host_key_path: "/etc/ssh/ssh_host_ecdsa_key"
+
+openssh_server__ed25519_host_key_path: "/etc/ssh/ssh_host_ed25519_key"

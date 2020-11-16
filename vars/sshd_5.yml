@@ -1,0 +1,18 @@
+# sshd version 5
+openssh_server__ciphers:
+  - aes256-ctr
+  - aes192-ctr
+  - aes128-ctr
+
+openssh_server__kex_algorithms:
+  - diffie-hellman-group-exchange-sha256
+
+openssh_server__macs:
+  - hmac-sha2-512
+
+# Disable unsupported options
+openssh_server_fingerprint_hash: null
+
+openssh_server_rekey_limit: null
+
+openssh_server_permit_tty: null

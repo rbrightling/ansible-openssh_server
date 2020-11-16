@@ -1,0 +1,125 @@
+{{ ansible_managed | comment }}
+{% macro openssh_server_option_format(option, value) -%}
+{% if value is not none %}
+{%   if value is iterable and option in ('HostKey', 'ListenAddress', 'Port') %}
+{%     for key in value %}
+{{ option }} {{ key | openssh_server_argument }}
+{%     endfor %}
+{%   elif option in ('AuthorizedKeysFile', 
+                     'AuthenticationMethods', 
+                     'AllowUsers',
+                     'AllowGroups',
+                     'DenyGroups',
+                     'DenyUsers') %}
+{{ option }} {{ value | openssh_server_argument(join=' ') }}
+{%   else %}
+{{ option }} {{ value | openssh_server_argument }}
+{%   endif %}
+{% endif %}
+{%- endmacro %}
+# Global Options
+{{ openssh_server_option_format("AddressFamily", openssh_server_address_family) -}}
+{{ openssh_server_option_format("HostKey", openssh_server_host_key) -}}
+{{ openssh_server_option_format("Port", openssh_server_port) -}}
+{{ openssh_server_option_format("ListenAddress", openssh_server_listen_address) -}}
+{{ "" }}
+# Ciphers and keying
+{{ openssh_server_option_format("Ciphers", openssh_server_ciphers) -}} 
+{{ openssh_server_option_format("FingerprintHash", openssh_server_fingerprint_hash) -}}
+{{ openssh_server_option_format("HostbasedAcceptedKeyTypes", openssh_server_hostbased_accepted_key_types) -}} 
+{{ openssh_server_option_format("HostKeyAlgorithms", openssh_server_host_key_algorithms) -}}
+{{ openssh_server_option_format("KexAlgorithms", openssh_server_kex_algorithms) -}} 
+{{ openssh_server_option_format("MACs", openssh_server_macs) -}}
+{{ openssh_server_option_format("PubkeyAcceptedKeyTypes", openssh_server_pubkey_accepted_key_types) -}} 
+{{ openssh_server_option_format("RekeyLimit", openssh_server_rekey_limit) -}}
+{{ "" }}
+# Logging
+{{ openssh_server_option_format("SyslogFacility", openssh_server_syslog_facility) -}}
+{{ openssh_server_option_format("LogLevel", openssh_server_log_level) -}}
+{{ "" }}
+# Authentication
+{{ openssh_server_option_format("AuthenticationMethods", openssh_server_authentication_methods) -}}
+{{ openssh_server_option_format("AuthorizedKeysCommand", openssh_server_authorized_keys_command) -}}
+{% if openssh_server_major_version|int == 5 %}
+{{ openssh_server_option_format("AuthorizedKeysCommandRunAs", openssh_server_authorized_keys_command_user) -}}
+{% else %}
+{{ openssh_server_option_format("AuthorizedKeysCommandUser", openssh_server_authorized_keys_command_user) -}}
+{% endif %}
+{{ openssh_server_option_format("AuthorizedKeysFile", openssh_server_authorized_keys_file) -}}
+{{ openssh_server_option_format("AuthorizedPrincipalsFile", openssh_server_authorized_principals_file) -}} 
+{{ openssh_server_option_format("ChallengeResponseAuthentication", openssh_server_challenge_response_authentication) -}}
+{{ openssh_server_option_format("HostbasedAuthentication", openssh_server_hostbased_authentication) -}}
+{{ openssh_server_option_format("IgnoreRhosts", openssh_server_ignore_rhosts) -}}
+{{ openssh_server_option_format("IgnoreUserKnownHosts", openssh_server_ignore_user_known_hosts) -}}
+{{ openssh_server_option_format("LoginGraceTime", openssh_server_login_grace_time) -}}
+{{ openssh_server_option_format("MaxAuthTries", openssh_server_max_auth_tries) -}}
+{{ openssh_server_option_format("MaxSessions", openssh_server_max_sessions) -}}
+{{ openssh_server_option_format("PasswordAuthentication", openssh_server_password_authentication) -}}
+{{ openssh_server_option_format("PermitEmptyPasswords", openssh_server_permit_empty_passwords) -}}
+{{ openssh_server_option_format("PermitRootLogin", openssh_server_permit_root_login) -}}
+{{ openssh_server_option_format("PubkeyAuthentication", openssh_server_pubkey_authentication) -}}
+{{ openssh_server_option_format("RevokedKeys", openssh_server_revoked_keys) -}}
+{{ openssh_server_option_format("StrictModes", openssh_server_strict_modes) -}}
+{{ openssh_server_option_format("UsePAM", openssh_server_use_pam) -}}
+{{ openssh_server_option_format("AllowUsers", openssh_server_allow_users) -}} 
+{{ openssh_server_option_format("AllowGroups", openssh_server_allow_groups) -}}
+{{ openssh_server_option_format("DenyUsers", openssh_server_deny_users) -}}
+{{ openssh_server_option_format("DenyGroups", openssh_server_deny_groups) -}} 
+{{ "" }}
+# Kerberos options
+{{ openssh_server_option_format("KerberosAuthentication", openssh_server_kerberos_authentication) -}}
+{{ openssh_server_option_format("KerberosGetAFSToken", openssh_server_kerberos_get_afs_token) -}}
+{{ openssh_server_option_format("KerberosOrLocalPasswd", openssh_server_kerberos_or_local_passwd) -}}
+{{ openssh_server_option_format("KerberosTicketCleanup", openssh_server_kerberos_ticket_cleanup) -}}
+{{ "" }}
+# GSSAPI Options
+{{ openssh_server_option_format("GSSAPIAuthentication", openssh_server_gssapi_authentication) -}}
+{{ openssh_server_option_format("GSSAPICleanupCredentials", openssh_server_gssapi_cleanup_credentials) -}}
+{{ openssh_server_option_format("GSSAPIKeyExchange", openssh_server_gssapi_key_exchange) -}}
+{{ openssh_server_option_format("GSSAPIStrictAcceptorCheck", openssh_server_gssapi_strict_acceptor_check) -}}
+{{ "" }}
+# Forwarding Options
+{{ openssh_server_option_format("AllowAgentForwarding", openssh_server_allow_agent_forwarding) -}}
+{{ openssh_server_option_format("AllowTcpForwarding", openssh_server_allow_tcp_forwarding) -}}
+{{ openssh_server_option_format("GatewayPorts", openssh_server_gateway_ports) -}}
+{{ openssh_server_option_format("X11Forwarding", openssh_server_x11_forwarding) -}}
+{{ openssh_server_option_format("X11DisplayOffset", openssh_server_x11_display_offset) -}}
+{{ openssh_server_option_format("X11UseLocalhost", openssh_server_x11_use_localhost) -}}
+{{ openssh_server_option_format("PermitTunnel", openssh_server_permit_tunnel) -}} 
+{{ "" }}
+# Other Options
+{{ openssh_server_option_format("AcceptEnv", openssh_server_accept_env) -}}
+{{ openssh_server_option_format("Banner", openssh_server_banner) -}} 
+{{ openssh_server_option_format("ChrootDirectory", openssh_server_chroot_directory) -}} 
+{{ openssh_server_option_format("ClientAliveInterval", openssh_server_client_alive_interval) -}}
+{{ openssh_server_option_format("ClientAliveCountMax", openssh_server_client_alive_count_max) -}}
+{{ openssh_server_option_format("Compression", openssh_server_compression) -}}
+{{ openssh_server_option_format("MaxStartups", openssh_server_max_startups) -}} 
+{{ openssh_server_option_format("PidFile", openssh_server_pid_file) -}}
+{{ openssh_server_option_format("PermitTTY", openssh_server_permit_tty) -}}
+{{ openssh_server_option_format("PermitUserEnvironment", openssh_server_permit_user_environment) -}} 
+{{ openssh_server_option_format("PrintMotd", openssh_server_print_motd) -}}
+{{ openssh_server_option_format("PrintLastLog", openssh_server_print_last_log) -}}
+{{ openssh_server_option_format("Subsystem", openssh_server_subsystem) -}}
+{{ openssh_server_option_format("TCPKeepAlive", openssh_server_tcp_keep_alive) -}}
+{{ openssh_server_option_format("UseDNS", openssh_server_use_dns) -}} 
+{{ openssh_server_option_format("VersionAddendum", openssh_server_version_addendum) -}} 
+{%- if match is not none %}
+{{ "" }}
+# Match sepcific options
+{% for match in openssh_server_match %}
+{% if match.all is defined and match.all is sameas True %}
+Match ALL
+{% else %}
+Match{{ " " + match.user | openssh_server_user_match if match.user is defined else "" }} 
+{{-     " " + match.group | openssh_server_group_match if match.group is defined else "" }}
+{{-     " " + match.host | openssh_server_host_match if match.host is defined else "" }}
+{{-     " " + match.address | openssh_server_address_match if match.address is defined else "" }}
+{{-     " " + match.local_address | openssh_server_local_address_match if match.local_address is defined else "" }}
+{{-     " " + match.local_port | openssh_server_local_port_match if match.local_port is defined else "" }}
+{% endif %}
+{% for option, value in match['options'].items()|sort %}
+  {{ openssh_server_option_format(option, value) -}}
+{% endfor %}
+{% endfor %}
+{%- endif %}

@@ -1,0 +1,140 @@
+---
+# tasks file for openssh_server
+
+- name: include distro variables
+  include_vars: "{{ lookup('first_found', params) }}"
+  vars:
+    params:
+      files:
+        - "{{ ansible_distribution | lower }}_{{ ansible_distribution_major_version }}.yml"
+        - "{{ ansible_distribution | lower }}.yml"
+        - "{{ ansible_os_family | lower }}.yml"
+        - default.yml
+      paths:
+        - '{{ playbook_dir }}/vars'
+        - '{{ role_path }}/vars'
+
+- name: install openssh server package
+  package:
+    name: "{{ openssh_server__packages }}"
+    state: present
+  become: true
+  tags:
+    - install
+
+- name: get openssh server version
+  command: "{{ openssh_server__sshd_path }} -v"
+  register: openssh_server_reg_version
+  changed_when: false
+  failed_when: false
+  check_mode: no
+
+- name: parse openssh server version
+  set_fact:
+    openssh_server_major_version: "{{ openssh_server_reg_version.stderr | regex_replace(
+      '^(.|\\r|\\n)*OpenSSH_(?P<major_version>\\d*).[0-9](.|\\r|\\n)*$', '\\g<major_version>') }}"
+    openssh_server_minor_version: "{{ openssh_server_reg_version.stderr | regex_search('.*OpenSSH_[0-9]*.(0-9)', '\\1') }}"
+
+- name: include openssh server release variables
+  include_vars: "{{ lookup('first_found', params) }}"
+  vars:
+    params:
+      files:
+        - "sshd_{{ openssh_server_major_version }}_{{ openssh_server_minor_version }}.yml"
+        - "sshd_{{ openssh_server_major_version }}.yml"
+        - sshd_default.yml
+      paths:
+        - '{{ role_path }}/vars'
+        - '{{ playbook_dir }}/vars'
+
+- name: get host rsa host key
+  command: "{{ openssh_server__ssh_keygen_bin }} -lf {{ openssh_server__rsa_host_key_path }}"
+  register: openssh_server_reg_rsa_host_key_print
+  changed_when: false
+  failed_when: false
+  check_mode: no
+  when: openssh_server__rsa_host_key_path in openssh_server_host_key
+
+- name: Remove RSA hostkey for bit mismatch
+  file:
+    path: "{{ openssh_server__rsa_host_key_path }}"
+    state: absent
+  when: openssh_server_reg_rsa_host_key_print is not skipped and
+    openssh_server_reg_rsa_host_key_print.rc == 0 and
+    openssh_server_reg_rsa_host_key_print.stdout.split(maxsplit=1)[0]|int != openssh_server_rsa_host_key_bit|int
+  become: true
+
+- name: generate hostkeys
+  command:  "{{ openssh_server__ssh_keygen_bin }} {{ item.command }}"
+  args:
+    creates: "{{ item.path }}"
+  with_items:
+    - path: "{{ openssh_server__rsa_host_key_path }}"
+      command: "-f {{ openssh_server__rsa_host_key_path }} -q -N '' -h -t rsa -b {{ openssh_server_rsa_host_key_bit }}"
+    - path: "{{ openssh_server__ecdsa_host_key_path }}"
+      command: "-f {{ openssh_server__ecdsa_host_key_path }} -q -N '' -h -t ecdsa"
+    - path: "{{ openssh_server__ed25519_host_key_path }}"
+      command: "-f {{ openssh_server__ed25519_host_key_path }} -q -N '' -h -t ed25519"
+  loop_control:
+    label: "{{ item.path }}"
+  become: true
+  when: item.path in openssh_server_host_key
+  tags:
+    - setup
+
+- name: configure revoked key list
+  template:
+    src: revoked_keys.j2
+    dest: "{{ openssh_server_revoked_keys }}"
+    owner: root
+    group: root
+    mode: "0600"
+  become: true
+  when: openssh_server_revoked_keys and openssh_server_revoked_key_list is iterable
+  tags:
+    - setup
+
+- name: configure openssh-server banner
+  template:
+    src: issue.net.j2
+    dest: "{{ openssh_server_banner }}"
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  when: 'openssh_server_banner != "none" and openssh_server_issue is not none'
+  tags:
+    - configure
+
+- name: include distro specific tasks
+  include_tasks: "{{ dist_tasks_file }}"
+  loop: "{{ query('first_found', params, errors='ignore') }}"
+  loop_control:
+    loop_var: "dist_tasks_file"
+  vars:
+    params:
+      files:
+        - "{{ ansible_os_family | lower }}.yml"
+
+- name: configure openssh server
+  template:
+    src: sshd_config.j2
+    dest: "{{ openssh_server__conf_path }}"
+    owner: root
+    group: root
+    mode: "0600"
+    validate: "{{ openssh_server__sshd_path }} -t -f %s"
+  become: true
+  notify:
+    - "restart openssh_server service"
+  tags:
+    - configure
+
+- name: start and enable openssh server
+  service:
+    name: "{{ openssh_server__service_name }}"
+    state: started
+    enabled: true
+  become: true
+  tags:
+    - service

@@ -1,0 +1,4 @@
+{{ ansible_managed | comment }}
+{% for key in openssh_server_revoked_key_list %}
+{{ key }}
+{% endfor %}
