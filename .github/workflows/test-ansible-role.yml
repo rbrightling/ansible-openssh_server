@@ -3,8 +3,18 @@ name: Test Ansible Role
 on: [push, pull_request]
 
 jobs:
-  molecule:
+  test:
+    name: molecule
     runs-on: ubuntu-latest
+    stratergy:
+      matrix:
+        distro:
+          - centos8
+          - debian10
+        ansible:
+          - ansible210
+          - ansible209
+          - ansible208
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -16,8 +26,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install tox
       - name: run tox tests
-        run: tox
+        run: tox -e py37-${{ matrix.ansbile }}-%{{ matrix.distro }}
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
           MOLE_DRIVER: 'docker'
+          MOLECULE_PRIVILEGED: true
