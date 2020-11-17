@@ -2,7 +2,7 @@
 dependency:
   name: galaxy
 driver:
-  name: podman
+  name: ${MOLE_DRIVER:-podman}
 lint: |
     set -e
     yamllint .
@@ -11,7 +11,7 @@ lint: |
 platforms:
   - name: instance
     image: geerlingguy/docker-${MOLECULE_DISTRO:-debian10}-ansible:latest
-    command: /sbin/init
+    command: ""
     tmpfs:
       - /run
       - /tmp
