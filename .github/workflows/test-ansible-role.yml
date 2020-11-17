@@ -6,7 +6,7 @@ jobs:
   test:
     name: molecule
     runs-on: ubuntu-latest
-    stratergy:
+    strategy:
       matrix:
         distro:
           - centos8
