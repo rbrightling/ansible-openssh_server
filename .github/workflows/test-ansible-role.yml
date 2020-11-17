@@ -26,7 +26,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install tox
       - name: run tox tests
-        run: tox -e py37-${{ matrix.ansbile }}-%{{ matrix.distro }}
+        run: tox -e py37-${{ matrix.ansible }}-%{{ matrix.distro }}
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
