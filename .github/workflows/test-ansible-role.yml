@@ -13,8 +13,8 @@ jobs:
           - debian10
         ansible:
           - ansible210
-          - ansible209
-          - ansible208
+          - ansible29
+          - ansible28
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
