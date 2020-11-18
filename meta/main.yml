@@ -1,5 +1,5 @@
 galaxy_info:
-  name: openssh_server
+  role_name: openssh_server
   author: Robert Brightling
   description: OpenSSH Server Configuration
 

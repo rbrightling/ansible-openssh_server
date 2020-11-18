@@ -1,13 +1,16 @@
 Openssh Server
 ==============
 
+![Test Ansible Role](https://github.com/rbrightling/ansible-openssh_server/workflows/Test%20Ansible%20Role/badge.svg)
+
+
 Configure and Manage Openssh server.
 
-**NOTE**: It is possible to lock out network access to the node over ssh. Check configuration carefully or you access 
-to local console access before application.
+**NOTE**: It is possible to lock out network access to the node over ssh. Check configuration carefully or you have access
+to local console before application.
 
-Best practice security has tried to be applied to the default configurations; however, always ensure sufficiant 
-scrutiny is as this is no guarantee.
+Best practice security has tried to be applied to the default configurations; however, always ensure sufficiant
+scrutiny as this is no guarantee.
 
 **NOTE**: By default root account login is disabled. Ensure you have access to login via a normal user account.
 
