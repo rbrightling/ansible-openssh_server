@@ -1,7 +1,7 @@
 Openssh Server
 ==============
 
-![Test Ansible Role](https://github.com/rbrightling/ansible-openssh_server/workflows/Test%20Ansible%20Role/badge.svg)
+![Test Ansible Role](https://github.com/rbrightling/ansible-openssh_server/workflows/Test%20Ansible%20Role/badge.svg) [![Ansible Galaxy](http://img.shields.io/badge/galaxy-rbrightling.openssh_server-660198.svg?style=flat)](https://galaxy.ansible.com/rbrightling/openssh_server)
 
 
 Configure and Manage Openssh server.
