@@ -3,18 +3,28 @@ name: Test Ansible Role
 on: [push, pull_request]
 
 jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+     - uses: actions/checkout@v2
+     - name: Ansible Lint
+       uses: ansible/ansible-lint-action@master
+       with:
+         targets: ""
+
   test:
     name: molecule
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        distro:
-          - centos8
-          - debian10
         ansible:
           - ansible210
           - ansible29
           - ansible28
+        distro:
+          - centos8
+          - debian10
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
