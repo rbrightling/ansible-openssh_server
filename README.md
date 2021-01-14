@@ -17,6 +17,8 @@ scrutiny as this is no guarantee.
 Requirements
 ------------
 
+Ansible Version: 2.8+
+
 Supports OS's
 - Debian 10
 - Centos 8
@@ -359,6 +361,9 @@ openssh_server_sshd_opts: ""
 # redhat service crypto policy.
 # null to comment and use system wide policy
 openssh_server_crypto_policy: ""
+
+# Do not changed this option useless you have hardware random generators and you really know what you are going.
+openssh_server_ssh_use_strong_rng: false # (RedHat only)
 ```
 
 Dependencies

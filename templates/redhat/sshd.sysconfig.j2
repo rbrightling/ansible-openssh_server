@@ -6,6 +6,13 @@
 # of DSA key or  systemctl mask sshd-keygen@rsa.service  to disable RSA key
 # creation.
 
+# Use hardware random generator; only enable if you REALLY know what you are doing
+{% if openssh_server_ssh_use_strong_rng is sameas true %}
+SSH_USE_STRONG_RNG=1
+{% else %}
+SSH_USE_STRONG_RNG=0
+{% endif %}
+
 # System-wide crypto policy:
 # To opt-out, uncomment the following line
 {% if openssh_server_crypto_policy is not none %}
@@ -14,7 +21,5 @@ CRYPTO_POLICY={{ openssh_server_crypto_policy }}
 #CRYPTO_POLICY=
 {% endif %}
 
-# Decrease connection time by preventing reverse DNS lookups
-# (see https://lists.centos.org/pipermail/centos-devel/2016-July/014981.html
-#  and man sshd for more information)
+# Options to pass to sshd
 OPTIONS="{{ openssh_server_sshd_opts }}"
