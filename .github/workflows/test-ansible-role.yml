@@ -1,6 +1,6 @@
 name: Test Ansible Role
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   lint:
@@ -15,6 +15,7 @@ jobs:
 
   test:
     name: molecule
+    needs: lint
     runs-on: ubuntu-latest
     strategy:
       matrix:
