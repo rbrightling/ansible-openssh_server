@@ -13,7 +13,7 @@
                      'DenyUsers') %}
 {{ option }} {{ value | openssh_server_argument(join=' ') }}
 {%   else %}
-{{ option }} {{ value | openssh_server_argument }}
+{{ option }} {{ value | openssh_server_argument | string}}
 {%   endif %}
 {% endif %}
 {%- endmacro %}
